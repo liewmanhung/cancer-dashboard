@@ -238,7 +238,7 @@ export default function Sidebar({
             style={{ borderTop: '1px solid var(--border)' }}>
             <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.6 }}>
               <span className="font-mono">OncoTrack v1.0</span>
-              <br />数据存储于本地浏览器
+              <br />数据同步至云端
             </div>
           </div>
         </div>
