@@ -51,12 +51,12 @@ export default function RecordModal({ record, onSave, onClose }: Props) {
     onSave({
       id: record?.id || generateId(),
       date,
-      treatment: treatment || undefined,
+      treatment: treatment.trim() || null,
       markers: cleaned,
-      blood: Object.keys(blood).length > 0 ? blood : undefined,
-      imaging: imaging || undefined,
-      symptoms: symptoms || undefined,
-      notes: notes || undefined,
+      blood: Object.keys(blood).length > 0 ? blood : null,
+      imaging: imaging.trim() || null,
+      symptoms: symptoms.trim() || null,
+      notes: notes.trim() || null,
     })
   }
 
