@@ -46,7 +46,7 @@ export async function analyzeReportImage(imageBase64: string, mimeType: string):
   ]
 
 
-  const raw = await callGrok(messages, 'grok-4-1-fast-reasoning')
+  const raw = await callGrok(messages, 'deepseek-v4-pro')
   try {
     const clean = raw.replace(/```json\n?|\n?```/g, '').trim()
     return JSON.parse(clean)
@@ -107,7 +107,7 @@ ${summary}
     }
   ]
 
-  return callGrok(messages, 'grok-4-1-fast-reasoning')
+  return callGrok(messages, 'deepseek-v4-pro')
 }
 
 export async function chatWithAI(
@@ -133,5 +133,5 @@ ${recentRecords}
     { role: 'user', content: userMessage }
   ]
 
-  return callGrok(messages, 'grok-4-1-fast-reasoning')
+  return callGrok(messages, 'deepseek-v4-pro')
 }

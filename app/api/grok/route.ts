@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   const { messages, model = 'grok-4-1-fast-reasoning' } = body
 
   try {
-    const response = await fetch('https://api.x.ai/v1/chat/completions', {
+    const response = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
