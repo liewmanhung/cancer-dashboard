@@ -1,8 +1,12 @@
 import { PatientProfile, MARKER_REFS } from './types'
 
 export async function generatePDFReport(patient: PatientProfile, analysis: string): Promise<void> {
+  const safeName = patient.name.replace(/[^\x00-\x7F]/g, '#')
+  const safeDiagnosis = (patient.diagnosis || 'N/A').replace(/[^\x00-\x7F]/g, '#')
+  const safePathology = (patient.pathology || 'N/A').replace(/[^\x00-\x7F]/g, '#')
+  const safeGenetics = (patient.genetics || 'N/A').replace(/[^\x00-\x7F]/g, '#')
   // Dynamic import to avoid SSR issues
-  const [{ default: jsPDF }] = await Promise.all([
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
     import('jspdf'),
     import('jspdf-autotable'),
   ])
@@ -40,13 +44,11 @@ export async function generatePDFReport(patient: PatientProfile, analysis: strin
   doc.setTextColor(...colors.light)
   doc.setFontSize(11)
   doc.setFont('helvetica', 'normal')
-  doc.text(`Patient: ${patient.name}  |  Generated: ${new Date().toLocaleDateString('zh-CN')}`, margin, 32)
+  doc.text(`Patient: ${safeName}  |  Generated: ${new Date().toISOString().slice(0,10)}`, margin, 32)
 
-  if (patient.diagnosis) {
-    doc.setFontSize(9)
-    doc.setTextColor(...colors.muted)
-    doc.text(`Diagnosis: ${patient.diagnosis}`, margin, 40)
-  }
+  doc.setFontSize(9)
+  doc.setTextColor(...colors.muted)
+  doc.text(`Diagnosis: ${safeDiagnosis}`, margin, 40)
 
   y = 55
 
@@ -57,8 +59,8 @@ export async function generatePDFReport(patient: PatientProfile, analysis: strin
   doc.setTextColor(...colors.navy)
 
   const infoItems = [
-    ['Pathology', patient.pathology || 'N/A'],
-    ['Genetics', patient.genetics || 'N/A'],
+    ['Pathology', safePathology],
+    ['Genetics', safeGenetics],
     ['First Diagnosis', patient.firstDiagnosisDate || 'N/A'],
     ['Total Records', String(patient.records.length)],
   ]
@@ -113,7 +115,7 @@ export async function generatePDFReport(patient: PatientProfile, analysis: strin
       ]
     })
 
-    ;(doc as any).autoTable({
+    autoTable(doc, {
       head: [headers],
       body: rows,
       startY: y,
@@ -149,7 +151,7 @@ export async function generatePDFReport(patient: PatientProfile, analysis: strin
       },
     })
 
-    y = (doc as any).lastAutoTable.finalY + 12
+    y = (autoTable as any).previous?.finalY + 12 || y + 40
   }
 
   // ─── Blood Test Table ───
@@ -176,7 +178,7 @@ export async function generatePDFReport(patient: PatientProfile, analysis: strin
       String(r.blood?.ast ?? '-'),
     ])
 
-    ;(doc as any).autoTable({
+    autoTable(doc, {
       head: [bloodHeaders],
       body: bloodRows,
       startY: y,
@@ -186,7 +188,7 @@ export async function generatePDFReport(patient: PatientProfile, analysis: strin
       alternateRowStyles: { fillColor: colors.gray },
     })
 
-    y = (doc as any).lastAutoTable.finalY + 12
+    y = (autoTable as any).previous?.finalY + 12 || y + 40
   }
 
   // ─── AI Analysis ───
@@ -202,7 +204,7 @@ export async function generatePDFReport(patient: PatientProfile, analysis: strin
     y += 10
 
     // Strip markdown for PDF
-    const cleanAnalysis = analysis
+    const cleanAnalysis = analysis.replace(/[^\x00-\x7F]/g, '')
       .replace(/#{1,3}\s*/g, '')
       .replace(/\*\*(.*?)\*\*/g, '$1')
       .replace(/\*(.*?)\*/g, '$1')

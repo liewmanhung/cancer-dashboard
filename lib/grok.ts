@@ -23,48 +23,30 @@ export async function callGrok(messages: GrokMessage[], model?: string): Promise
 }
 
 export async function analyzeReportImage(imageBase64: string, mimeType: string): Promise<Partial<TreatmentRecord>> {
-  const messages: GrokMessage[] = [
-    {
-      role: 'system',
-      content: `You are a medical AI assistant analyzing cancer treatment reports. 
-Extract structured data from medical reports including tumor markers, blood tests, imaging findings, and treatments.
-Always respond with valid JSON only, no markdown, no explanation.
-JSON schema:
+  const prompt = `你是医疗AI助手。分析这张检验报告图片，提取所有数据。
+只返回JSON，不要任何解释或markdown格式：
 {
-  "date": "YYYY-MM-DD or null",
-  "treatment": "treatment description or null",
-  "markers": [{"name": "CEA|CA199|CA125|CA153|CA724|AFP", "value": number}],
-  "blood": {
-    "wbc": number or null,
-    "hgb": number or null,
-    "plt": number or null,
-    "neutrophil": number or null,
-    "creatinine": number or null,
-    "alt": number or null,
-    "ast": number or null,
-    "tbil": number or null
-  },
-  "imaging": "imaging findings summary or null",
-  "symptoms": "symptoms/side effects or null",
-  "notes": "other notes or null"
+  "date": "YYYY-MM-DD或null",
+  "treatment": "治疗方案或null",
+  "markers": [{"name": "CEA", "value": 12.3}],
+  "blood": {"wbc": 5.2, "hgb": 110, "plt": 234, "neutrophil": null, "creatinine": null, "alt": null, "ast": null, "tbil": null},
+  "imaging": "影像描述或null",
+  "symptoms": "症状或null",
+  "notes": "备注或null"
 }`
-    },
+
+  const messages: GrokMessage[] = [
     {
       role: 'user',
       content: [
-        {
-          type: 'image_url',
-          image_url: { url: `data:${mimeType};base64,${imageBase64}` }
-        },
-        {
-          type: 'text',
-          text: 'Extract all medical data from this report image. Return JSON only.'
-        }
+        { type: 'image_url', image_url: { url: `data:${mimeType};base64,${imageBase64}` } },
+        { type: 'text', text: prompt }
       ]
     }
   ]
 
-  const raw = await callGrok(messages, 'grok-2-vision-1212')
+
+  const raw = await callGrok(messages, 'grok-4-1-fast-reasoning')
   try {
     const clean = raw.replace(/```json\n?|\n?```/g, '').trim()
     return JSON.parse(clean)
@@ -125,7 +107,7 @@ ${summary}
     }
   ]
 
-  return callGrok(messages, 'grok-2-1212')
+  return callGrok(messages, 'grok-4-1-fast-reasoning')
 }
 
 export async function chatWithAI(
@@ -151,5 +133,5 @@ ${recentRecords}
     { role: 'user', content: userMessage }
   ]
 
-  return callGrok(messages, 'grok-2-1212')
+  return callGrok(messages, 'grok-4-1-fast-reasoning')
 }

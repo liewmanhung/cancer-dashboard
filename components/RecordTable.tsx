@@ -2,7 +2,7 @@
 
 import { TreatmentRecord, MARKER_REFS, getMarkerStatus } from '@/lib/types'
 import { Edit2, Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 interface Props {
   records: TreatmentRecord[]
@@ -101,7 +101,7 @@ export default function RecordTable({ records, onEdit, onDelete, onAdd }: Props)
                 record.markers.forEach(m => { markerMap[m.name] = m.value })
 
                 return (
-                  <>
+                  <React.Fragment key={record.id}>
                     <tr key={record.id}
                       style={{ cursor: 'pointer' }}
                       onClick={() => setExpanded(isExpanded ? null : record.id)}>
@@ -229,7 +229,7 @@ export default function RecordTable({ records, onEdit, onDelete, onAdd }: Props)
                         </td>
                       </tr>
                     )}
-                  </>
+                  </React.Fragment>
                 )
               })}
             </tbody>

@@ -80,10 +80,78 @@ export default function PatientDashboard({ patient, onUpdate, onToggleSidebar }:
   const handleExportPDF = async () => {
     setPdfLoading(true)
     try {
-      await generatePDFReport(patient, aiAnalysis)
-    } catch (e) {
-      console.error('PDF error:', e)
-      alert('PDF生成失败：' + String(e))
+      const sortedRecords = [...patient.records].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      )
+      const allMarkers = [...new Set(sortedRecords.flatMap(r => r.markers.map(m => m.name)))]
+
+      const tableRows = sortedRecords.map(r => {
+        const markerMap: Record<string, string> = {}
+        r.markers.forEach(m => { markerMap[m.name] = String(m.value ?? '-') })
+        return `<tr>
+          <td>${r.date}</td>
+          <td>${r.treatment || '-'}</td>
+          ${allMarkers.map(n => `<td>${markerMap[n] ?? '-'}</td>`).join('')}
+          <td>${r.blood?.wbc ?? '-'}</td>
+          <td>${r.blood?.hgb ?? '-'}</td>
+          <td>${r.blood?.plt ?? '-'}</td>
+          <td>${r.symptoms || '-'}</td>
+        </tr>`
+      }).join('')
+
+      const html = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>${patient.name} 抗癌治疗报告</title>
+<style>
+  body { font-family: 'Microsoft YaHei', Arial, sans-serif; padding: 30px; color: #1a1a2e; }
+  h1 { color: #0284c7; border-bottom: 2px solid #0284c7; padding-bottom: 10px; }
+  h2 { color: #334e68; margin-top: 24px; font-size: 16px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 12px; }
+  th { background: #102a43; color: #38bdf8; padding: 8px; text-align: left; }
+  td { padding: 7px 8px; border-bottom: 1px solid #e0e0e0; }
+  tr:nth-child(even) td { background: #f5f9ff; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  .info-box { background: #f0f4f8; border-radius: 8px; padding: 12px; }
+  .info-label { font-size: 11px; color: #627d98; text-transform: uppercase; margin-bottom: 4px; }
+  .info-value { font-size: 13px; color: #102a43; font-weight: 600; }
+  .analysis { background: #f8fafc; border-left: 4px solid #0284c7; padding: 16px; margin-top: 12px; font-size: 13px; line-height: 1.8; white-space: pre-wrap; }
+  .disclaimer { margin-top: 24px; font-size: 11px; color: #888; border-top: 1px solid #eee; padding-top: 12px; }
+  @media print { body { padding: 15px; } }
+</style>
+</head>
+<body>
+<h1>🩺 抗癌治疗追踪报告</h1>
+
+<div class="info-grid">
+  <div class="info-box"><div class="info-label">患者姓名</div><div class="info-value">${patient.name}</div></div>
+  <div class="info-box"><div class="info-label">生成日期</div><div class="info-value">${new Date().toLocaleDateString('zh-CN')}</div></div>
+  <div class="info-box"><div class="info-label">诊断</div><div class="info-value">${patient.diagnosis || '未记录'}</div></div>
+  <div class="info-box"><div class="info-label">基因检测</div><div class="info-value">${patient.genetics || '未记录'}</div></div>
+  <div class="info-box" style="grid-column:span 2"><div class="info-label">免疫组化</div><div class="info-value">${patient.pathology || '未记录'}</div></div>
+</div>
+
+<h2>📊 治疗记录历史</h2>
+<table>
+  <thead><tr>
+    <th>日期</th><th>治疗方案</th>
+    ${allMarkers.map(m => `<th>${m}</th>`).join('')}
+    <th>WBC</th><th>HGB</th><th>PLT</th><th>症状</th>
+  </tr></thead>
+  <tbody>${tableRows}</tbody>
+</table>
+
+${aiAnalysis ? `<h2>🤖 AI 医学分析</h2><div class="analysis">${aiAnalysis.replace(/#{1,3}\s*/g, '').replace(/\*\*(.*?)\*\*/g, '$1')}</div>` : ''}
+
+<div class="disclaimer">⚕️ 免责声明：本报告由 AI 辅助生成，仅供参考，不构成医疗建议。请以主治医师意见为准。</div>
+</body>
+</html>`
+
+      const win = window.open('', '_blank')!
+      win.document.write(html)
+      win.document.close()
+      setTimeout(() => win.print(), 500)
     } finally {
       setPdfLoading(false)
     }
@@ -238,7 +306,7 @@ export default function PatientDashboard({ patient, onUpdate, onToggleSidebar }:
       </div>
 
       {/* Tab content */}
-      <div className="flex-1 overflow-y-auto" style={{ background: 'var(--bg-primary)', padding: 20 }}>
+      <div className="flex-1 overflow-y-auto" style={{ background: 'var(--bg-primary)', padding: 20 }} id="dashboard-content">
         {tab === 'overview' && (
           <OverviewCards
             patient={patient}

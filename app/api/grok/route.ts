@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { messages, model = 'grok-2-vision-1212' } = body
+  const { messages, model = 'grok-4-1-fast-reasoning' } = body
 
   try {
     const response = await fetch('https://api.x.ai/v1/chat/completions', {
