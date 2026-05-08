@@ -35,7 +35,9 @@ export default function PatientDashboard({ patient, onUpdate, onToggleSidebar }:
 
   const records = sortRecords(patient.records)
 
-  const handleSaveRecord = (record: TreatmentRecord) => {
+  const handleSaveRecord = async (record: TreatmentRecord) => {
+    const { saveRecord } = await import('@/lib/storage')
+    await saveRecord(record, patient.id)
     const exists = patient.records.find(r => r.id === record.id)
     const updated = exists
       ? patient.records.map(r => r.id === record.id ? record : r)
@@ -45,7 +47,9 @@ export default function PatientDashboard({ patient, onUpdate, onToggleSidebar }:
     setEditingRecord(null)
   }
 
-  const handleDeleteRecord = (id: string) => {
+  const handleDeleteRecord = async (id: string) => {
+    const { deleteRecordFromDb } = await import('@/lib/storage')
+    await deleteRecordFromDb(id)
     onUpdate({ ...patient, records: patient.records.filter(r => r.id !== id) })
   }
 

@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { PatientProfile } from '@/lib/types'
-import { loadPatients, savePatient, deletePatient, createNewPatient } from '@/lib/storage'
+import {
+  loadPatients, savePatient, deletePatientFromDb,
+  createNewPatient
+} from '@/lib/storage'
 import Sidebar from '@/components/Sidebar'
 import PatientDashboard from '@/components/PatientDashboard'
 import WelcomeScreen from '@/components/WelcomeScreen'
@@ -14,30 +17,29 @@ export default function Home() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    const loaded = loadPatients()
-    setPatients(loaded)
-    if (loaded.length > 0) setActivePatientId(loaded[0].id)
-    setMounted(true)
+    loadPatients().then(loaded => {
+      setPatients(loaded)
+      if (loaded.length > 0) setActivePatientId(loaded[0].id)
+      setMounted(true)
+    })
   }, [])
 
   const activePatient = patients.find(p => p.id === activePatientId) || null
 
-  const handleAddPatient = (name: string) => {
+  const handleAddPatient = async (name: string) => {
     const patient = createNewPatient(name)
-    const updated = [...patients, patient]
-    setPatients(updated)
-    savePatient(patient)
+    await savePatient(patient)
+    setPatients(prev => [...prev, patient])
     setActivePatientId(patient.id)
   }
 
-  const handleUpdatePatient = (updated: PatientProfile) => {
-    const list = patients.map(p => p.id === updated.id ? updated : p)
-    setPatients(list)
-    savePatient(updated)
+  const handleUpdatePatient = async (updated: PatientProfile) => {
+    await savePatient(updated)
+    setPatients(prev => prev.map(p => p.id === updated.id ? updated : p))
   }
 
-  const handleDeletePatient = (id: string) => {
-    deletePatient(id)
+  const handleDeletePatient = async (id: string) => {
+    await deletePatientFromDb(id)
     const remaining = patients.filter(p => p.id !== id)
     setPatients(remaining)
     if (activePatientId === id) {
@@ -51,7 +53,7 @@ export default function Home() {
         <div className="flex flex-col items-center gap-4">
           <div className="spinner" style={{ width: 40, height: 40, borderWidth: 3 }} />
           <p style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: 13 }}>
-            Initializing...
+            Loading data...
           </p>
         </div>
       </div>
@@ -60,7 +62,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
-      {/* Sidebar */}
       <Sidebar
         patients={patients}
         activePatientId={activePatientId}
@@ -70,8 +71,6 @@ export default function Home() {
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
-
-      {/* Main content */}
       <main className="flex-1 overflow-y-auto overflow-x-hidden">
         {activePatient ? (
           <PatientDashboard
