@@ -44,7 +44,7 @@ export default function OverviewCards({ patient, records, onEdit }: Props) {
     const status = ref ? getMarkerStatus(name, latest) : 'unknown'
 
     return { name, latest, prev, trend, ref, status, count: vals.length }
-  }).filter(Boolean) as NonNullable<ReturnType<typeof allMarkerNames.map>>[number][]
+  }).filter((m): m is NonNullable<typeof m> => m !== null)
 
   // Last blood test
   const lastBlood = [...records].reverse().find(r => r.blood && Object.values(r.blood).some(v => v != null))?.blood
