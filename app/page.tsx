@@ -13,7 +13,7 @@ import WelcomeScreen from '@/components/WelcomeScreen'
 export default function Home() {
   const [patients, setPatients] = useState<PatientProfile[]>([])
   const [activePatientId, setActivePatientId] = useState<string | null>(null)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
