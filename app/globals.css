@@ -1,0 +1,232 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: 'Crimson Pro', serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --bg-primary: #0a0f1a;
+  --bg-secondary: #0f1825;
+  --bg-card: #131f2e;
+  --bg-card-hover: #182536;
+  --border: #1e3048;
+  --border-accent: #2a4a6e;
+
+  --text-primary: #e8f0fe;
+  --text-secondary: #8ba8cc;
+  --text-muted: #4d6a8a;
+
+  --accent-teal: #38bdf8;
+  --accent-teal-dim: #0c3c5a;
+  --accent-amber: #fbbf24;
+  --accent-amber-dim: #4a3000;
+  --accent-rose: #fb7185;
+  --accent-rose-dim: #4a0d1a;
+  --accent-emerald: #34d399;
+  --accent-emerald-dim: #0a3d28;
+  --accent-violet: #a78bfa;
+  --accent-violet-dim: #2d1a4a;
+
+  --gradient-header: linear-gradient(135deg, #0a0f1a 0%, #0d1929 50%, #0a1525 100%);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Glass card */
+.glass {
+  background: rgba(19, 31, 46, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.glass-hover:hover {
+  background: rgba(24, 37, 54, 0.9);
+  border-color: var(--border-accent);
+  transition: all 0.2s ease;
+}
+
+/* Neon glow effects */
+.glow-teal { box-shadow: 0 0 20px rgba(56, 189, 248, 0.15); }
+.glow-rose { box-shadow: 0 0 20px rgba(251, 113, 133, 0.15); }
+.glow-amber { box-shadow: 0 0 20px rgba(251, 191, 36, 0.15); }
+.glow-emerald { box-shadow: 0 0 20px rgba(52, 211, 153, 0.15); }
+
+/* Animated scan line */
+.scan-line {
+  position: relative;
+  overflow: hidden;
+}
+.scan-line::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-teal), transparent);
+  animation: scan 4s linear infinite;
+  opacity: 0.3;
+}
+@keyframes scan {
+  0% { top: -2px; }
+  100% { top: 100%; }
+}
+
+/* Chart tooltips */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-accent) !important;
+  border-radius: 8px !important;
+  color: var(--text-primary) !important;
+}
+
+/* Number display font */
+.font-mono { font-family: var(--font-mono) !important; }
+.font-display { font-family: var(--font-display) !important; }
+
+/* Status badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.badge-normal { background: var(--accent-emerald-dim); color: var(--accent-emerald); border: 1px solid rgba(52,211,153,0.2); }
+.badge-warning { background: var(--accent-amber-dim); color: var(--accent-amber); border: 1px solid rgba(251,191,36,0.2); }
+.badge-danger { background: var(--accent-rose-dim); color: var(--accent-rose); border: 1px solid rgba(251,113,133,0.2); }
+.badge-info { background: var(--accent-teal-dim); color: var(--accent-teal); border: 1px solid rgba(56,189,248,0.2); }
+
+/* Animated gradient border */
+.gradient-border {
+  position: relative;
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-violet), var(--accent-teal));
+  background-size: 200% 200%;
+  animation: gradientMove 4s ease infinite;
+  z-index: -1;
+}
+@keyframes gradientMove {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Upload zone */
+.upload-zone {
+  border: 2px dashed var(--border-accent);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--accent-teal);
+  background: rgba(56, 189, 248, 0.04);
+}
+
+/* Table styles */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.data-table th {
+  background: rgba(30, 48, 72, 0.6);
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(30, 48, 72, 0.4);
+  color: var(--text-primary);
+}
+.data-table tr:hover td {
+  background: rgba(19, 31, 46, 0.6);
+}
+
+/* Loading spinner */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent-teal);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Pulse dot */
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-emerald);
+  animation: pulseDot 2s ease-in-out infinite;
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+/* Section headers */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Value trend indicators */
+.trend-up { color: var(--accent-rose); }
+.trend-down { color: var(--accent-emerald); }
+.trend-neutral { color: var(--text-muted); }
+
+/* Smooth transitions */
+.transition-smooth { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Print styles for PDF */
+@media print {
+  body { background: white; color: black; }
+  .no-print { display: none !important; }
+}
