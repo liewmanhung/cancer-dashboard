@@ -9,29 +9,29 @@
   --font-body: 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  --bg-primary: #0a0f1a;
-  --bg-secondary: #0f1825;
-  --bg-card: #131f2e;
-  --bg-card-hover: #182536;
-  --border: #1e3048;
-  --border-accent: #2a4a6e;
+  --bg-primary: #f0f4f8;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --border: #e2e8f0;
+  --border-accent: #cbd5e1;
 
-  --text-primary: #e8f0fe;
-  --text-secondary: #8ba8cc;
-  --text-muted: #4d6a8a;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #94a3b8;
 
-  --accent-teal: #38bdf8;
-  --accent-teal-dim: #0c3c5a;
-  --accent-amber: #fbbf24;
-  --accent-amber-dim: #4a3000;
-  --accent-rose: #fb7185;
-  --accent-rose-dim: #4a0d1a;
-  --accent-emerald: #34d399;
-  --accent-emerald-dim: #0a3d28;
-  --accent-violet: #a78bfa;
-  --accent-violet-dim: #2d1a4a;
+  --accent-teal: #0284c7;
+  --accent-teal-dim: #e0f2fe;
+  --accent-amber: #d97706;
+  --accent-amber-dim: #fef3c7;
+  --accent-rose: #e11d48;
+  --accent-rose-dim: #ffe4e6;
+  --accent-emerald: #059669;
+  --accent-emerald-dim: #d1fae5;
+  --accent-violet: #7c3aed;
+  --accent-violet-dim: #ede9fe;
 
-  --gradient-header: linear-gradient(135deg, #0a0f1a 0%, #0d1929 50%, #0a1525 100%);
+  --gradient-header: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%);
 }
 
 * {
