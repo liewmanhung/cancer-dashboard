@@ -20,13 +20,13 @@ export interface BloodTest {
 
 export interface TreatmentRecord {
   id: string
-  date: string          // ISO date string
-  treatment?: string    // 治疗方案
+  date: string
+  treatment?: string | null
   markers: TumorMarker[]
-  blood?: BloodTest
-  imaging?: string      // 影像报告
-  symptoms?: string     // 体感/不良反应
-  notes?: string
+  blood?: BloodTest | null
+  imaging?: string | null
+  symptoms?: string | null
+  notes?: string | null
 }
 
 export interface PatientProfile {
