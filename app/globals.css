@@ -9,29 +9,29 @@
   --font-body: 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  --bg-primary: #f0f4f8;
+  --bg-primary: #f5f7fa;
   --bg-secondary: #ffffff;
   --bg-card: #ffffff;
-  --bg-card-hover: #f8fafc;
-  --border: #e2e8f0;
-  --border-accent: #cbd5e1;
+  --bg-card-hover: #f8f9fb;
+  --border: #e8ecf0;
+  --border-accent: #d0d7de;
 
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-muted: #94a3b8;
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #9ca3af;
 
-  --accent-teal: #0284c7;
-  --accent-teal-dim: #e0f2fe;
+  --accent-teal: #2563eb;
+  --accent-teal-dim: #eff6ff;
   --accent-amber: #d97706;
-  --accent-amber-dim: #fef3c7;
-  --accent-rose: #e11d48;
-  --accent-rose-dim: #ffe4e6;
-  --accent-emerald: #059669;
-  --accent-emerald-dim: #d1fae5;
+  --accent-amber-dim: #fffbeb;
+  --accent-rose: #dc2626;
+  --accent-rose-dim: #fff5f5;
+  --accent-emerald: #16a34a;
+  --accent-emerald-dim: #f0fdf4;
   --accent-violet: #7c3aed;
-  --accent-violet-dim: #ede9fe;
+  --accent-violet-dim: #f5f3ff;
 
-  --gradient-header: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%);
+  --gradient-header: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
 }
 
 * {
@@ -61,14 +61,14 @@ body {
 
 /* Glass card */
 .glass {
-  background: rgba(19, 31, 46, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
+  background: #ffffff;
+  border: 1px solid #e8ecf0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 
 .glass-hover:hover {
-  background: rgba(24, 37, 54, 0.9);
-  border-color: var(--border-accent);
+  background: #f8f9fb;
+  border-color: #d0d7de;
   transition: all 0.2s ease;
 }
 
