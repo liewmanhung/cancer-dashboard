@@ -44,6 +44,9 @@ export default function Sidebar({
         className="relative flex flex-col h-full transition-all duration-300 ease-in-out flex-shrink-0"
         style={{
           width: isOpen ? 260 : 0,
+         position: 'fixed',
+         zIndex: 40,
+         height: '100%',
           background: 'var(--bg-secondary)',
           borderRight: '1px solid var(--border)',
           overflow: 'hidden',

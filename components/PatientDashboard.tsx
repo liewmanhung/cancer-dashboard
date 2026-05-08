@@ -225,7 +225,7 @@ ${aiAnalysis ? `<h2>🤖 AI 医学分析</h2><div class="analysis">${aiAnalysis.
             }}
           >
             <FilePlus size={14} />
-            手动录入
+            <span className="hidden sm:inline">手动录入</span>
           </button>
 
           <button
@@ -245,7 +245,7 @@ ${aiAnalysis ? `<h2>🤖 AI 医学分析</h2><div class="analysis">${aiAnalysis.
             }}
           >
             {aiLoading ? <div className="spinner" style={{ width: 12, height: 12 }} /> : <Brain size={14} />}
-            AI分析
+            <span className="hidden sm:inline">AI分析</span>
           </button>
 
           <button
@@ -265,7 +265,7 @@ ${aiAnalysis ? `<h2>🤖 AI 医学分析</h2><div class="analysis">${aiAnalysis.
             }}
           >
             {pdfLoading ? <div className="spinner" style={{ width: 12, height: 12 }} /> : <FileDown size={14} />}
-            导出PDF
+            <span className="hidden sm:inline">导出PDF</span>
           </button>
         </div>
       </header>
@@ -304,7 +304,7 @@ ${aiAnalysis ? `<h2>🤖 AI 医学分析</h2><div class="analysis">${aiAnalysis.
             }}
           >
             {t.icon}
-            {t.label}
+            <span className="hidden sm:inline">{t.label}</span>
           </button>
         ))}
       </div>
