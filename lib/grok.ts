@@ -6,9 +6,14 @@ interface GrokMessage {
 }
 
 interface GrokContent {
-  type: 'text' | 'image_url'
+  type: 'text' | 'image_url' | 'image'
   text?: string
-  image_url?: { url: string }
+  image_url?: { url: string; detail?: string }
+  source?: {
+    type: 'base64'
+    media_type: string
+    data: string
+  }
 }
 
 export async function callGrok(messages: GrokMessage[], model?: string): Promise<string> {
