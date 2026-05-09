@@ -24,25 +24,48 @@ export async function callGrok(messages: GrokMessage[], model?: string): Promise
 }
 
 export async function analyzeReportImage(imageBase64: string, mimeType: string): Promise<Partial<TreatmentRecord>> {
-  const prompt = `你是专业医疗OCR助手。仔细分析这张检验报告，提取所有数据。
+  const prompt = `你是专业医疗OCR助手。仔细分析这张检验报告图片，提取所有数据。
 
-分类规则：
-- markers（仅限肿瘤标志物）：CEA、AFP、CA199、CA125、CA153、CA724、CA211、NSE、SCC、PSA、HCG等，如果报告中没有这些指标则markers为空数组
-- blood（生化/血常规/其他所有指标）：肝功能、肾功能、电解质、血糖、血脂、血常规、酶学等全部放这里，用英文缩写作为key
+规则：
+1. markers数组：只放肿瘤标志物（CEA、AFP、CA199、CA125、CA153、CA724、NSE、PSA等），没有则为空数组
+2. blood对象：报告中所有其他检验指标，key用"英文缩写中文名"格式（如"ALT谷丙转氨酶"），value为数字
+3. 必须提取报告中每一行指标，一个不能漏，按序号顺序检查
+4. 只返回JSON，不要任何解释或markdown
 
-- 报告中序号1到最后一个序号的每个指标都必须提取，按顺序检查不要跳过
-必须提取报告中每一行，不能遗漏。只返回JSON：
+返回格式示例：
 {
-  "date": "YYYY-MM-DD或null",
+  "date": "2026-05-07",
   "treatment": null,
-  "markers": [],
+  "markers": [
+    {"name": "CEA", "value": 12.3}
+  ],
   "blood": {
-    "wbc": null, "hgb": null, "plt": null, "neutrophil": null,
-    "creatinine": null, "alt": null, "ast": null, "tbil": null,
-    "ldh": null, "ck": null, "ckMb": null, "tp": null, "alb": null,
-    "glb": null, "dbil": null, "tba": null, "glu": null, "urea": null,
-    "hco3": null, "ua": null, "na": null, "k": null, "cl": null,
-    "ca": null, "p": null, "ggt": null, "alp": null, "che": null
+    "LDH乳酸脱氢酶": 284,
+    "CK肌酸激酶": 58,
+    "CKMB肌酸激酶MB同工酶": 33.8,
+    "TP总蛋白": 66.2,
+    "ALB白蛋白": 32.4,
+    "GLB球蛋白": 33.8,
+    "AG白蛋白球蛋白比值": 1.0,
+    "TBIL总胆红素": 8.7,
+    "DBIL直接胆红素": 1.9,
+    "TBA总胆汁酸": 11,
+    "GLU葡萄糖": 7.14,
+    "Urea尿素": 7.8,
+    "HCO3碳酸氢盐": 23.9,
+    "UA尿酸": 261,
+    "Cr肌酐": 68.82,
+    "Na钠": 142,
+    "K钾": 4,
+    "Cl氯": 105.1,
+    "Ca钙": 2.24,
+    "CA校正校正血清钙": 2.39,
+    "P无机磷": 1.14,
+    "ALT谷丙转氨酶": 14,
+    "GGT谷氨酰转移酶": 15,
+    "ALP碱性磷酸酶": 86,
+    "CHE胆碱酯酶": 7308,
+    "AST谷草转氨酶": 28
   },
   "imaging": null,
   "symptoms": null,
@@ -78,9 +101,12 @@ export async function generatePatientAnalysis(patient: PatientProfile): Promise<
   const summary = records.map(r => {
     const markerStr = r.markers.map(m => `${m.name}: ${m.value}`).join(', ')
     const bloodStr = r.blood
-      ? `WBC:${r.blood.wbc ?? '-'} HGB:${r.blood.hgb ?? '-'} PLT:${r.blood.plt ?? '-'}`
+      ? Object.entries(r.blood)
+          .filter(([, v]) => v != null)
+          .map(([k, v]) => `${k}:${v}`)
+          .join(' ')
       : ''
-    return `[${r.date}] 治疗: ${r.treatment || '无'} | 标志物: ${markerStr} | 血常规: ${bloodStr}${r.symptoms ? ' | 症状: ' + r.symptoms : ''}`
+    return `[${r.date}] 治疗: ${r.treatment || '无'} | 标志物: ${markerStr} | 检验: ${bloodStr}${r.symptoms ? ' | 症状: ' + r.symptoms : ''}`
   }).join('\n')
 
   const messages: GrokMessage[] = [
@@ -106,7 +132,7 @@ export async function generatePatientAnalysis(patient: PatientProfile): Promise<
 （基于数据的一般性建议，必须注明需遵循主治医师指导）
 
 ---
-*⚕️ 免责声明：以上分析由AI生成，仅供参考，不构成医疗建议。请以主治医师意见为准。*`
+*⚕️ 免责声明：以上分析由AI生成，仅供参考，不构成医疗建议。请以主治医师意见为准。*`,
     },
     {
       role: 'user',
@@ -118,8 +144,8 @@ export async function generatePatientAnalysis(patient: PatientProfile): Promise<
 治疗记录（按时间排序）：
 ${summary}
 
-请提供详细的医学分析。`
-    }
+请提供详细的医学分析。`,
+    },
   ]
 
   return callGrok(messages, 'grok-4-1-fast-reasoning')
@@ -145,7 +171,7 @@ ${recentRecords}
   const messages: GrokMessage[] = [
     { role: 'system', content: systemMsg },
     ...history.map(h => ({ role: h.role as 'user' | 'assistant', content: h.content })),
-    { role: 'user', content: userMessage }
+    { role: 'user', content: userMessage },
   ]
 
   return callGrok(messages, 'grok-4-1-fast-reasoning')
