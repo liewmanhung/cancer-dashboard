@@ -1,6 +1,6 @@
 'use client'
 
-import { PatientProfile, TreatmentRecord, MARKER_REFS, getMarkerStatus, BLOOD_LABELS } from '@/lib/types'
+import { PatientProfile, TreatmentRecord, MARKER_REFS, getMarkerStatus } from '@/lib/types'
 import { TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle, Clock } from 'lucide-react'
 
 interface Props {
