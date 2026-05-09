@@ -78,6 +78,7 @@ export async function saveRecord(record: TreatmentRecord, patientId: string): Pr
     id: record.id,
     patient_id: patientId,
     date: record.date,
+    hospital: record.hospital ?? null,
     treatment: record.treatment ?? null,
     markers: record.markers,
     blood: record.blood ?? null,

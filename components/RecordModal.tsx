@@ -36,6 +36,7 @@ const labelStyle = {
 
 export default function RecordModal({ record, onSave, onClose }: Props) {
   const [date, setDate] = useState(record?.date || new Date().toISOString().slice(0, 10))
+  const [hospital, setHospital] = useState(record?.hospital || '')
   const [treatment, setTreatment] = useState(record?.treatment || '')
   const [markers, setMarkers] = useState<TumorMarker[]>(
     record?.markers || COMMON_MARKERS.map(n => ({ name: n, value: null }))
@@ -51,6 +52,7 @@ export default function RecordModal({ record, onSave, onClose }: Props) {
     onSave({
       id: record?.id || generateId(),
       date,
+      hospital: hospital.trim() || null,
       treatment: treatment.trim() || null,
       markers: cleaned,
       blood: Object.keys(blood).length > 0 ? blood : null,
@@ -121,6 +123,16 @@ export default function RecordModal({ record, onSave, onClose }: Props) {
               <input type="date" value={date} onChange={e => setDate(e.target.value)} style={inputStyle} />
             </div>
             <div>
+              <label style={labelStyle}>医院名称</label>
+              <input
+                type="text"
+                value={hospital}
+                onChange={e => setHospital(e.target.value)}
+                placeholder="如：广东省人民医院"
+                style={inputStyle}
+              />
+            </div>
+            <div className="col-span-2">
               <label style={labelStyle}>治疗方案</label>
               <input
                 type="text"

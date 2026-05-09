@@ -14,6 +14,7 @@ export interface BloodTest {
 export interface TreatmentRecord {
   id: string
   date: string
+  hospital?: string | null
   treatment?: string | null
   markers: TumorMarker[]
   blood?: BloodTest | null
