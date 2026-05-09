@@ -48,6 +48,7 @@ export async function loadPatients(): Promise<PatientProfile[]> {
       records: (records || []).map(r => ({
         id: r.id,
         date: r.date,
+        hospital: r.hospital,
         treatment: r.treatment,
         markers: r.markers || [],
         blood: r.blood,
