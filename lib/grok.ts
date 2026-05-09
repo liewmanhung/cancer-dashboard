@@ -46,7 +46,7 @@ export async function analyzeReportImage(imageBase64: string, mimeType: string):
     }
   ]
 
-  const raw = await callGrok(messages, 'grok-2-vision-1212')
+  const raw = await callGrok(messages, 'grok-4.3')
   const clean = raw.replace(/```json\n?|\n?```/g, '').trim()
   try {
     return JSON.parse(clean)
