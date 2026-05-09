@@ -7,15 +7,35 @@ export interface TumorMarker {
 }
 
 export interface BloodTest {
-  wbc?: number       // 白细胞 (×10⁹/L), ref 3.5-9.5
-  hgb?: number       // 血红蛋白 (g/L), ref 115-150
-  plt?: number       // 血小板 (×10⁹/L), ref 125-350
-  neutrophil?: number // 中性粒细胞
-  creatinine?: number // 血肌酐
-  alt?: number        // 谷丙转氨酶
-  ast?: number        // 谷草转氨酶
-  tbil?: number       // 总胆红素
-  pct?: number        // 降钙素原
+  wbc?: number           // 白细胞 (×10⁹/L)
+  hgb?: number           // 血红蛋白 (g/L)
+  plt?: number           // 血小板 (×10⁹/L)
+  neutrophil?: number    // 中性粒细胞
+  creatinine?: number    // 血肌酐 Cr
+  alt?: number           // 谷丙转氨酶 ALT
+  ast?: number           // 谷草转氨酶 AST
+  tbil?: number          // 总胆红素 TBIL
+  pct?: number           // 降钙素原
+  ldh?: number           // 乳酸脱氢酶 LDH
+  ck?: number            // 肌酸激酶 CK
+  ckMb?: number          // 肌酸激酶MB CK-MB
+  tp?: number            // 总蛋白 TP
+  alb?: number           // 白蛋白 ALB
+  glb?: number           // 球蛋白 GLB
+  dbil?: number          // 直接胆红素 DBIL
+  tba?: number           // 总胆汁酸 TBA
+  glu?: number           // 葡萄糖 GLU
+  urea?: number          // 尿素 Urea
+  hco3?: number          // 碳酸氢盐 HCO3
+  ua?: number            // 尿酸 UA
+  na?: number            // 钠 Na
+  k?: number             // 钾 K
+  cl?: number            // 氯 Cl
+  ca?: number            // 钙 Ca
+  p?: number             // 无机磷 P
+  ggt?: number           // γ-谷氨酰转移酶 GGT
+  alp?: number           // 碱性磷酸酶 ALP
+  che?: number           // 胆碱酯酶 CHE
 }
 
 export interface TreatmentRecord {
