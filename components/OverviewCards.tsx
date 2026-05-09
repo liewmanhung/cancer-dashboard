@@ -252,7 +252,7 @@ export default function OverviewCards({ patient, records, onEdit }: Props) {
                     border: '1px solid var(--border)', textAlign: 'center',
                   }}>
                     <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 2 }}>
-                      {BLOOD_LABELS[k] || k}
+                      {k}
                     </div>
                     <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                       {val}
