@@ -6,14 +6,9 @@ interface GrokMessage {
 }
 
 interface GrokContent {
-  type: 'text' | 'image_url' | 'image'
+  type: 'text' | 'image_url'
   text?: string
   image_url?: { url: string; detail?: string }
-  source?: {
-    type: 'base64'
-    media_type: string
-    data: string
-  }
 }
 
 export async function callGrok(messages: GrokMessage[], model?: string): Promise<string> {
@@ -24,6 +19,7 @@ export async function callGrok(messages: GrokMessage[], model?: string): Promise
   })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   const data = await res.json()
+  if (data.error) throw new Error(data.error)
   return data.choices?.[0]?.message?.content || ''
 }
 
@@ -47,19 +43,17 @@ export async function analyzeReportImage(imageBase64: string, mimeType: string):
         { type: 'image_url', image_url: { url: `data:${mimeType};base64,${imageBase64}` } },
         { type: 'text', text: prompt }
       ]
-        },
-        { type: 'text', text: prompt }
-      ]
     }
   ]
 
-
-  const raw = await callGrok(messages, 'grok-4-1-fast-reasoning')
+  const raw = await callGrok(messages, 'grok-2-vision-1212')
+  const clean = raw.replace(/```json\n?|\n?```/g, '').trim()
   try {
-    const clean = raw.replace(/```json\n?|\n?```/g, '').trim()
     return JSON.parse(clean)
   } catch {
-    throw new Error('Failed to parse AI response as JSON')
+    const match = clean.match(/\{[\s\S]*\}/)
+    if (match) return JSON.parse(match[0])
+    throw new Error('AI返回格式错误: ' + raw.slice(0, 200))
   }
 }
 
