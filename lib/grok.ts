@@ -44,13 +44,9 @@ export async function analyzeReportImage(imageBase64: string, mimeType: string):
     {
       role: 'user',
       content: [
-        { 
-          type: 'image',
-          source: {
-            type: 'base64',
-            media_type: mimeType,
-            data: imageBase64,
-          }
+        { type: 'image_url', image_url: { url: `data:${mimeType};base64,${imageBase64}` } },
+        { type: 'text', text: prompt }
+      ]
         },
         { type: 'text', text: prompt }
       ]
