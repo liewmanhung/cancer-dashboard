@@ -24,17 +24,37 @@ export async function callGrok(messages: GrokMessage[], model?: string): Promise
 }
 
 export async function analyzeReportImage(imageBase64: string, mimeType: string): Promise<Partial<TreatmentRecord>> {
-  const prompt = `你是医疗AI助手。分析这张检验报告图片，提取所有数据。
-只返回JSON，不要任何解释或markdown格式：
+  const prompt = `你是专业医疗OCR助手。请仔细分析这张检验报告图片，提取**所有**数据，不要遗漏任何指标。
+
+重要要求：
+1. 扫描报告中每一行数据，包括所有肿瘤标志物、血常规、生化指标
+2. 不要只提取部分数据，必须提取全部指标
+3. 只返回JSON，不要任何解释或markdown
+
+返回格式：
 {
   "date": "YYYY-MM-DD或null",
   "treatment": "治疗方案或null",
-  "markers": [{"name": "CEA", "value": 12.3}],
-  "blood": {"wbc": 5.2, "hgb": 110, "plt": 234, "neutrophil": null, "creatinine": null, "alt": null, "ast": null, "tbil": null},
+  "markers": [
+    {"name": "指标名称", "value": 数值},
+    {"name": "指标名称", "value": 数值}
+  ],
+  "blood": {
+    "wbc": 数值或null,
+    "hgb": 数值或null,
+    "plt": 数值或null,
+    "neutrophil": 数值或null,
+    "creatinine": 数值或null,
+    "alt": 数值或null,
+    "ast": 数值或null,
+    "tbil": 数值或null
+  },
   "imaging": "影像描述或null",
   "symptoms": "症状或null",
   "notes": "备注或null"
-}`
+}
+
+注意：markers数组必须包含报告中所有肿瘤标志物和其他检验指标，每个指标单独一行。血常规指标同时也放进markers数组里。`
 
   const messages: GrokMessage[] = [
     {
