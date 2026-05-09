@@ -251,9 +251,14 @@ export default function OverviewCards({ patient, records, onEdit }: Props) {
                     background: 'var(--bg-card)', borderRadius: 8, padding: '8px 10px',
                     border: '1px solid var(--border)', textAlign: 'center',
                   }}>
-                    <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 2 }}>
-                      {k}
+                    <div style={{ marginBottom: 2 }}>
+                    <div style={{ fontSize: 11, color: 'var(--text-primary)', fontWeight: 600 }}>
+                      {k.match(/^[A-Za-z0-9\-\/]+/)?.[0] || k}
                     </div>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+                      {k.replace(/^[A-Za-z0-9\-\/]+/, '') || ''}
+                    </div>
+                  </div>
                     <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                       {val}
                     </div>
