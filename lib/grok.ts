@@ -24,37 +24,29 @@ export async function callGrok(messages: GrokMessage[], model?: string): Promise
 }
 
 export async function analyzeReportImage(imageBase64: string, mimeType: string): Promise<Partial<TreatmentRecord>> {
-  const prompt = `你是专业医疗OCR助手。请仔细分析这张检验报告图片，提取**所有**数据，不要遗漏任何指标。
+  const prompt = `你是专业医疗OCR助手。仔细分析这张检验报告，提取所有数据。
 
-重要要求：
-1. 扫描报告中每一行数据，包括所有肿瘤标志物、血常规、生化指标
-2. 不要只提取部分数据，必须提取全部指标
-3. 只返回JSON，不要任何解释或markdown
+分类规则：
+- markers（仅限肿瘤标志物）：CEA、AFP、CA199、CA125、CA153、CA724、CA211、NSE、SCC、PSA、HCG等，如果报告中没有这些指标则markers为空数组
+- blood（生化/血常规/其他所有指标）：肝功能、肾功能、电解质、血糖、血脂、血常规、酶学等全部放这里，用英文缩写作为key
 
-返回格式：
+必须提取报告中每一行，不能遗漏。只返回JSON：
 {
   "date": "YYYY-MM-DD或null",
-  "treatment": "治疗方案或null",
-  "markers": [
-    {"name": "指标名称", "value": 数值},
-    {"name": "指标名称", "value": 数值}
-  ],
+  "treatment": null,
+  "markers": [],
   "blood": {
-    "wbc": 数值或null,
-    "hgb": 数值或null,
-    "plt": 数值或null,
-    "neutrophil": 数值或null,
-    "creatinine": 数值或null,
-    "alt": 数值或null,
-    "ast": 数值或null,
-    "tbil": 数值或null
+    "wbc": null, "hgb": null, "plt": null, "neutrophil": null,
+    "creatinine": null, "alt": null, "ast": null, "tbil": null,
+    "ldh": null, "ck": null, "ckMb": null, "tp": null, "alb": null,
+    "glb": null, "dbil": null, "tba": null, "glu": null, "urea": null,
+    "hco3": null, "ua": null, "na": null, "k": null, "cl": null,
+    "ca": null, "p": null, "ggt": null, "alp": null, "che": null
   },
-  "imaging": "影像描述或null",
-  "symptoms": "症状或null",
-  "notes": "备注或null"
-}
-
-注意：markers数组必须包含报告中所有肿瘤标志物和其他检验指标，每个指标单独一行。血常规指标同时也放进markers数组里。`
+  "imaging": null,
+  "symptoms": null,
+  "notes": null
+}`
 
   const messages: GrokMessage[] = [
     {
