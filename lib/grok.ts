@@ -31,11 +31,13 @@ export async function analyzeReportImage(imageBase64: string, mimeType: string):
 2. blood对象：报告中所有其他检验指标，key用"英文缩写中文名"格式（如"ALT谷丙转氨酶"），value为数字
 3. 必须提取报告中每一行指标，一个不能漏，按序号顺序检查
 4. 只返回JSON，不要任何解释或markdown
+5. hospital：提取报告抬头的医院名称
 
 返回格式示例：
 {
   "date": "2026-05-07",
-  "treatment": null,
+"hospital": "医院名称或null",  
+"treatment": null,
   "markers": [
     {"name": "CEA", "value": 12.3}
   ],
