@@ -102,3 +102,35 @@ export function getMarkerStatus(name: string, value: number): MarkerStatus {
   if (ref.min && value < ref.min) return 'elevated'
   return 'normal'
 }
+
+export const BLOOD_LABELS: Record<string, string> = {
+  wbc: 'WBC 白细胞',
+  hgb: 'HGB 血红蛋白',
+  plt: 'PLT 血小板',
+  neutrophil: 'NEUT 中性粒细胞',
+  creatinine: 'Cr 肌酐',
+  alt: 'ALT 谷丙转氨酶',
+  ast: 'AST 谷草转氨酶',
+  tbil: 'TBIL 总胆红素',
+  pct: 'PCT 降钙素原',
+  ldh: 'LDH 乳酸脱氢酶',
+  ck: 'CK 肌酸激酶',
+  ckMb: 'CK-MB 肌酸激酶MB',
+  tp: 'TP 总蛋白',
+  alb: 'ALB 白蛋白',
+  glb: 'GLB 球蛋白',
+  dbil: 'DBIL 直接胆红素',
+  tba: 'TBA 总胆汁酸',
+  glu: 'GLU 葡萄糖',
+  urea: 'Urea 尿素',
+  hco3: 'HCO3 碳酸氢盐',
+  ua: 'UA 尿酸',
+  na: 'Na 钠',
+  k: 'K 钾',
+  cl: 'Cl 氯',
+  ca: 'Ca 钙',
+  p: 'P 无机磷',
+  ggt: 'GGT γ-谷氨酰转移酶',
+  alp: 'ALP 碱性磷酸酶',
+  che: 'CHE 胆碱酯酶',
+}

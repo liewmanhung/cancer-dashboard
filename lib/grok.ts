@@ -30,6 +30,7 @@ export async function analyzeReportImage(imageBase64: string, mimeType: string):
 - markers（仅限肿瘤标志物）：CEA、AFP、CA199、CA125、CA153、CA724、CA211、NSE、SCC、PSA、HCG等，如果报告中没有这些指标则markers为空数组
 - blood（生化/血常规/其他所有指标）：肝功能、肾功能、电解质、血糖、血脂、血常规、酶学等全部放这里，用英文缩写作为key
 
+- 报告中序号1到最后一个序号的每个指标都必须提取，按顺序检查不要跳过
 必须提取报告中每一行，不能遗漏。只返回JSON：
 {
   "date": "YYYY-MM-DD或null",

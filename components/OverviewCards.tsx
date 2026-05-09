@@ -1,6 +1,6 @@
 'use client'
 
-import { PatientProfile, TreatmentRecord, MARKER_REFS, getMarkerStatus } from '@/lib/types'
+import { PatientProfile, TreatmentRecord, MARKER_REFS, getMarkerStatus, BLOOD_LABELS } from '@/lib/types'
 import { TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle, Clock } from 'lucide-react'
 
 interface Props {
@@ -242,34 +242,24 @@ export default function OverviewCards({ patient, records, onEdit }: Props) {
             最新血常规
           </h3>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-            {[
-              { label: 'WBC', value: lastBlood.wbc, unit: '×10⁹/L', min: 3.5, max: 9.5 },
-              { label: 'HGB', value: lastBlood.hgb, unit: 'g/L', min: 115, max: 150 },
-              { label: 'PLT', value: lastBlood.plt, unit: '×10⁹/L', min: 125, max: 350 },
-              { label: 'NEUT', value: lastBlood.neutrophil, unit: '×10⁹/L', min: 1.5, max: 7 },
-              { label: 'ALT', value: lastBlood.alt, unit: 'U/L', max: 40 },
-              { label: 'AST', value: lastBlood.ast, unit: 'U/L', max: 40 },
-            ].filter(b => b.value != null).map(b => {
-              const val = b.value!
-              const abnormal = val > b.max || (b.min && val < b.min)
-              return (
-                <div key={b.label} className="text-center rounded-lg p-2"
-                  style={{
-                    background: abnormal ? 'var(--accent-rose-dim)' : 'var(--bg-card)',
-                    border: `1px solid ${abnormal ? 'rgba(251,113,133,0.2)' : 'var(--border)'}`,
+            {Object.entries(lastBlood)
+              .filter(([, v]) => v != null)
+              .map(([k, v]) => {
+                const val = v as number
+                return (
+                  <div key={k} style={{
+                    background: 'var(--bg-card)', borderRadius: 8, padding: '8px 10px',
+                    border: '1px solid var(--border)', textAlign: 'center',
                   }}>
-                  <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>{b.label}</div>
-                  <div style={{
-                    fontSize: 18, fontWeight: 700,
-                    color: abnormal ? 'var(--accent-rose)' : 'var(--accent-emerald)',
-                    fontFamily: 'var(--font-mono)',
-                  }}>
-                    {val}
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 2 }}>
+                      {BLOOD_LABELS[k] || k}
+                    </div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+                      {val}
+                    </div>
                   </div>
-                  <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{b.unit}</div>
-                </div>
-              )
-            })}
+                )
+              })}
           </div>
         </div>
       )}
