@@ -1,49 +1,40 @@
-# 🩺 OncoTrack — 癌症治疗追踪仪表盘
+# 🩺 OncoTrack — Cancer Treatment Dashboard
 
-> 为癌症患者和家属设计的 AI 智能治疗追踪工具，支持图片识别上传检验报告、动态趋势图、AI 医学分析、PDF 导出，数据云端同步。
+> An AI-powered cancer treatment tracking dashboard for patients and caregivers. Upload medical report photos, track tumor markers over time, get AI medical insights, and share data with family — all in one place.
 
-**[🌐 在线演示 Live Demo](https://cancer-dashboard.vercel.app)**
-
-![OncoTrack Screenshot](https://via.placeholder.com/900x500/f5f7fa/2563eb?text=OncoTrack+Cancer+Treatment+Dashboard)
+**[🌐 Live Demo](https://cancer-dashboard.vercel.app)** · **[中文说明](#中文说明)**
 
 ---
 
-## ✨ 功能特点 Features
+## ✨ Features
 
-| 功能 | 说明 |
-|------|------|
-| 📄 **AI 报告识别** | 拍照上传检验单，AI 自动提取所有指标数值 |
-| 📈 **动态趋势图** | 肿瘤标志物、血常规历史趋势可视化，支持多指标对比 |
-| 🤖 **AI 医学分析** | Grok AI 分析治疗效果，提供专业参考意见 |
-| 💬 **AI 问诊助手** | 基于患者数据的 AI 问答 |
-| 📑 **PDF 报告导出** | 一键生成完整治疗报告 |
-| 🏥 **多患者管理** | 支持同时追踪多位患者 |
-| ☁️ **云端同步** | 数据存储在 Supabase，家人可同时查看 |
-| 📱 **手机友好** | 支持手机浏览器直接使用 |
-
----
-
-## 🚀 快速部署 Quick Deploy
-
-### 第一步：准备账号 Prepare Accounts
-
-需要注册以下免费账号：
-
-1. **GitHub** — https://github.com （存放代码）
-2. **Vercel** — https://vercel.com （部署网站，免费）
-3. **Supabase** — https://supabase.com （数据库，免费）
-4. **xAI Grok API** — https://x.ai/api （AI 功能）
+| Feature | Description |
+|---------|-------------|
+| 📄 **AI Report Scanning** | Take a photo of any lab report — AI automatically extracts all test values |
+| 📈 **Trend Charts** | Interactive charts for tumor markers and blood tests over time |
+| 🤖 **AI Medical Analysis** | Grok AI analyzes treatment history and provides professional insights |
+| 💬 **AI Chat Assistant** | Ask questions about your data in natural language |
+| 📑 **PDF Export** | Generate a complete treatment report with one click |
+| 🏥 **Multi-patient** | Track multiple patients with separate profiles |
+| ☁️ **Cloud Sync** | Data stored in Supabase — accessible by the whole family |
+| 📱 **Mobile Friendly** | Works on phones and tablets |
 
 ---
 
-### 第二步：配置 Supabase 数据库
+## 🚀 Deploy Your Own (Free)
 
-1. 登录 [Supabase](https://supabase.com)，点击 **New Project** 创建项目
-2. 进入项目后，点击左侧 **SQL Editor**
-3. 粘贴以下代码并点击 **Run**：
+You'll need free accounts on:
+- **GitHub** — https://github.com
+- **Vercel** — https://vercel.com (hosting)
+- **Supabase** — https://supabase.com (database)
+- **xAI** — https://x.ai/api (Grok AI)
+
+### Step 1: Set up Supabase Database
+
+1. Create a new project at [supabase.com](https://supabase.com)
+2. Go to **SQL Editor** and run:
 
 ```sql
--- 患者表
 create table patients (
   id text primary key,
   name text not null,
@@ -55,7 +46,6 @@ create table patients (
   updated_at timestamptz default now()
 );
 
--- 治疗记录表
 create table records (
   id text primary key,
   patient_id text references patients(id) on delete cascade,
@@ -70,139 +60,114 @@ create table records (
   created_at timestamptz default now()
 );
 
--- 开放读写权限
 alter table patients enable row level security;
 alter table records enable row level security;
-
 create policy "allow all" on patients for all using (true) with check (true);
 create policy "allow all" on records for all using (true) with check (true);
 ```
 
-4. 进入 **Settings → API Keys**，记录以下两个值：
-   - **Project URL**（格式：`https://xxxxxx.supabase.co`）
-   - **anon public** key（以 `eyJ` 开头的长字符串）
+3. Go to **Settings → API Keys** and save your:
+   - **Project URL** (e.g. `https://xxxxxx.supabase.co`)
+   - **anon public** key (starts with `eyJ...`)
 
----
+### Step 2: Get a Grok API Key
 
-### 第三步：获取 Grok API Key
+1. Go to https://x.ai/api
+2. Sign up and create an API key
 
-1. 打开 https://x.ai/api
-2. 注册/登录，进入 **API Keys**
-3. 创建一个新的 API Key，复制保存
-
----
-
-### 第四步：部署到 Vercel
-
-#### 方式A：一键部署（推荐）
+### Step 3: Deploy to Vercel
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/liewmanhung/cancer-dashboard)
 
-点击上方按钮，按提示操作，在 **Environment Variables** 步骤填入：
+Click the button above and set these environment variables:
 
-| 变量名 | 值 |
-|--------|-----|
-| `GROK_API_KEY` | 你的 Grok API Key |
-| `NEXT_PUBLIC_SUPABASE_URL` | 你的 Supabase Project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | 你的 Supabase anon key |
+| Variable | Value |
+|----------|-------|
+| `GROK_API_KEY` | Your Grok API key |
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase Project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon key |
+| `APP_PASSWORD` | A password to protect your dashboard (optional) |
 
-#### 方式B：手动部署
+### Step 4: Start Using
 
-1. Fork 本仓库到你的 GitHub
-2. 登录 [Vercel](https://vercel.com) → **New Project** → 导入你 Fork 的仓库
-3. 在 **Environment Variables** 填入上面三个变量
-4. 点击 **Deploy**
+Vercel will give you a URL like `https://your-app.vercel.app`. Open it and start adding patients!
 
 ---
 
-### 第五步：开始使用
-
-部署完成后，Vercel 会给你一个网址（如 `https://your-app.vercel.app`），打开即可使用。
-
----
-
-## 💻 本地开发 Local Development
+## 💻 Local Development
 
 ```bash
-# 1. 克隆仓库
+# Clone the repo
 git clone https://github.com/liewmanhung/cancer-dashboard.git
 cd cancer-dashboard
 
-# 2. 安装依赖（需要 Node.js 18+）
+# Install dependencies (requires Node.js 18+)
 npm install
 
-# 3. 配置环境变量
+# Set up environment variables
 cp .env.example .env.local
-# 编辑 .env.local 填入你的 API keys
+# Edit .env.local with your API keys
 
-# 4. 启动开发服务器
+# Start development server
 npm run dev
-# 打开 http://localhost:3000
+# Open http://localhost:3000
 ```
 
-### .env.local 配置
-
+**.env.local example:**
 ```env
-GROK_API_KEY=你的Grok API Key
-NEXT_PUBLIC_SUPABASE_URL=https://你的项目ID.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=你的anon key
+GROK_API_KEY=your_grok_api_key
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+APP_PASSWORD=your_optional_password
 ```
 
 ---
 
-## 📖 使用说明 How to Use
+## 🏗️ Tech Stack
 
-### 添加患者
-1. 点击左侧 **+** 按钮
-2. 输入患者姓名
-3. 在「患者信息」标签填写诊断、病理、基因检测等信息
-
-### 上传检验报告
-1. 点击「上传报告」标签
-2. 拍照或选择检验单图片上传
-3. AI 自动识别所有指标
-4. 确认数据后点击「确认导入」
-
-### 查看趋势图
-- 点击「趋势图」标签
-- 可选择显示哪些指标
-- 支持面积图和折线图切换
-
-### AI 分析
-- 点击顶部「AI分析」按钮
-- 等待 AI 生成完整的治疗效果分析报告
-- 也可以在「AI分析」标签与 AI 对话提问
-
-### 导出 PDF
-- 点击顶部「导出PDF」按钮
-- 在弹出的打印对话框中选择「另存为PDF」
-
----
-
-## 🏗️ 技术栈 Tech Stack
-
-- **框架**: Next.js 16
-- **样式**: Tailwind CSS
-- **图表**: Recharts
-- **数据库**: Supabase (PostgreSQL)
+- **Framework**: Next.js 16
+- **Styling**: Tailwind CSS
+- **Charts**: Recharts
+- **Database**: Supabase (PostgreSQL)
 - **AI**: xAI Grok API (Vision + Text)
-- **部署**: Vercel
+- **Deployment**: Vercel
 
 ---
 
-## ⚠️ 免责声明 Disclaimer
+## ⚠️ Medical Disclaimer
 
-> 本工具由 AI 辅助生成分析报告，**仅供参考，不构成医疗建议**。所有医疗决策请以主治医师意见为准。
->
-> This tool generates AI-assisted analysis for **reference only and does not constitute medical advice**. Always follow your physician's guidance for medical decisions.
+This tool generates AI-assisted analysis for **reference only and does not constitute medical advice**. Always follow your physician's guidance for all medical decisions.
 
 ---
 
-## 🤝 贡献 Contributing
+## 🤝 Contributing
 
-欢迎提交 Issue 和 Pull Request！如果这个工具对你有帮助，请给个 ⭐ Star，让更多患者能发现它。
+Issues and Pull Requests are welcome! If this tool helps you or someone you love, please give it a ⭐ **Star** — it helps more patients find this project.
 
-If this tool helps you, please give it a ⭐ Star so more patients can find it!
+---
+
+## 中文说明
+
+### 功能介绍
+
+OncoTrack 是一个为癌症患者和家属设计的智能治疗追踪工具：
+
+- **上传检验报告**：拍照上传检验单，AI 自动识别所有指标
+- **趋势图**：肿瘤标志物、血常规历史趋势可视化
+- **AI 分析**：Grok AI 分析治疗效果，提供参考意见
+- **云端同步**：家人可同时查看同一份数据
+- **PDF 导出**：一键生成完整治疗报告
+
+### 部署步骤
+
+1. 注册 [Supabase](https://supabase.com) 创建数据库，运行上方 SQL 建表
+2. 在 [Supabase Settings → API Keys](https://supabase.com) 获取 URL 和 anon key
+3. 注册 [xAI](https://x.ai/api) 获取 Grok API key
+4. 点击上方 **Deploy with Vercel** 按钮，填入三个环境变量即可
+
+### 免责声明
+
+本工具由 AI 辅助生成分析报告，**仅供参考，不构成医疗建议**。所有医疗决策请以主治医师意见为准。
 
 ---
 
