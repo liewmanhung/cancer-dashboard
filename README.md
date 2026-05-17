@@ -1,139 +1,211 @@
-# 🩺 OncoTrack — Cancer Treatment Dashboard
+# 🩺 OncoTrack — 癌症治疗追踪仪表盘
 
-> AI-powered cancer treatment tracking and analysis dashboard built with Next.js, Grok AI Vision, and Vercel.
+> 为癌症患者和家属设计的 AI 智能治疗追踪工具，支持图片识别上传检验报告、动态趋势图、AI 医学分析、PDF 导出，数据云端同步。
 
-![Dashboard Preview](https://via.placeholder.com/800x400/0a0f1a/38bdf8?text=OncoTrack+Dashboard)
+**[🌐 在线演示 Live Demo](https://cancer-dashboard.vercel.app)**
 
-## ✨ Features
+![OncoTrack Screenshot](https://via.placeholder.com/900x500/f5f7fa/2563eb?text=OncoTrack+Cancer+Treatment+Dashboard)
 
-| Feature | Description |
-|---------|-------------|
-| 📄 **AI Report Scanning** | Upload photos of medical reports — Grok Vision AI extracts tumor markers, blood tests, imaging findings automatically |
-| 📈 **Dynamic Charts** | Interactive trend charts for tumor markers (CEA, CA199, CA125...) and blood counts |
-| 🤖 **AI Medical Analysis** | Grok AI analyzes treatment history and provides professional insights |
-| 💬 **AI Chat** | Ask questions about your data, get AI-powered answers |
-| 📑 **PDF Export** | Generate comprehensive PDF reports with charts and AI analysis |
-| 🏥 **Multi-patient** | Track multiple patients with separate profiles |
-| 💾 **Local Storage** | All data stored in browser localStorage — completely private |
-| ⚠️ **Abnormal Flags** | Automatic highlighting of out-of-range values |
+---
 
-## 🚀 Quick Start
+## ✨ 功能特点 Features
 
-### 1. Clone & Install
+| 功能 | 说明 |
+|------|------|
+| 📄 **AI 报告识别** | 拍照上传检验单，AI 自动提取所有指标数值 |
+| 📈 **动态趋势图** | 肿瘤标志物、血常规历史趋势可视化，支持多指标对比 |
+| 🤖 **AI 医学分析** | Grok AI 分析治疗效果，提供专业参考意见 |
+| 💬 **AI 问诊助手** | 基于患者数据的 AI 问答 |
+| 📑 **PDF 报告导出** | 一键生成完整治疗报告 |
+| 🏥 **多患者管理** | 支持同时追踪多位患者 |
+| ☁️ **云端同步** | 数据存储在 Supabase，家人可同时查看 |
+| 📱 **手机友好** | 支持手机浏览器直接使用 |
+
+---
+
+## 🚀 快速部署 Quick Deploy
+
+### 第一步：准备账号 Prepare Accounts
+
+需要注册以下免费账号：
+
+1. **GitHub** — https://github.com （存放代码）
+2. **Vercel** — https://vercel.com （部署网站，免费）
+3. **Supabase** — https://supabase.com （数据库，免费）
+4. **xAI Grok API** — https://x.ai/api （AI 功能）
+
+---
+
+### 第二步：配置 Supabase 数据库
+
+1. 登录 [Supabase](https://supabase.com)，点击 **New Project** 创建项目
+2. 进入项目后，点击左侧 **SQL Editor**
+3. 粘贴以下代码并点击 **Run**：
+
+```sql
+-- 患者表
+create table patients (
+  id text primary key,
+  name text not null,
+  diagnosis text,
+  pathology text,
+  genetics text,
+  first_diagnosis_date text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- 治疗记录表
+create table records (
+  id text primary key,
+  patient_id text references patients(id) on delete cascade,
+  date text not null,
+  hospital text,
+  treatment text,
+  markers jsonb default '[]',
+  blood jsonb,
+  imaging text,
+  symptoms text,
+  notes text,
+  created_at timestamptz default now()
+);
+
+-- 开放读写权限
+alter table patients enable row level security;
+alter table records enable row level security;
+
+create policy "allow all" on patients for all using (true) with check (true);
+create policy "allow all" on records for all using (true) with check (true);
+```
+
+4. 进入 **Settings → API Keys**，记录以下两个值：
+   - **Project URL**（格式：`https://xxxxxx.supabase.co`）
+   - **anon public** key（以 `eyJ` 开头的长字符串）
+
+---
+
+### 第三步：获取 Grok API Key
+
+1. 打开 https://x.ai/api
+2. 注册/登录，进入 **API Keys**
+3. 创建一个新的 API Key，复制保存
+
+---
+
+### 第四步：部署到 Vercel
+
+#### 方式A：一键部署（推荐）
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/liewmanhung/cancer-dashboard)
+
+点击上方按钮，按提示操作，在 **Environment Variables** 步骤填入：
+
+| 变量名 | 值 |
+|--------|-----|
+| `GROK_API_KEY` | 你的 Grok API Key |
+| `NEXT_PUBLIC_SUPABASE_URL` | 你的 Supabase Project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | 你的 Supabase anon key |
+
+#### 方式B：手动部署
+
+1. Fork 本仓库到你的 GitHub
+2. 登录 [Vercel](https://vercel.com) → **New Project** → 导入你 Fork 的仓库
+3. 在 **Environment Variables** 填入上面三个变量
+4. 点击 **Deploy**
+
+---
+
+### 第五步：开始使用
+
+部署完成后，Vercel 会给你一个网址（如 `https://your-app.vercel.app`），打开即可使用。
+
+---
+
+## 💻 本地开发 Local Development
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/cancer-dashboard.git
+# 1. 克隆仓库
+git clone https://github.com/liewmanhung/cancer-dashboard.git
 cd cancer-dashboard
+
+# 2. 安装依赖（需要 Node.js 18+）
 npm install
-```
 
-### 2. Configure API Key
-
-```bash
+# 3. 配置环境变量
 cp .env.example .env.local
-# Edit .env.local and add your Grok API key:
-# GROK_API_KEY=your_key_here
-```
+# 编辑 .env.local 填入你的 API keys
 
-Get your Grok API key at: https://x.ai/api
-
-### 3. Run Locally
-
-```bash
+# 4. 启动开发服务器
 npm run dev
-# Open http://localhost:3000
+# 打开 http://localhost:3000
 ```
 
-## 🌐 Deploy to Vercel
+### .env.local 配置
 
-### Option A: Vercel CLI
-
-```bash
-npm i -g vercel
-vercel
-# Follow prompts, then add environment variable:
-vercel env add GROK_API_KEY
+```env
+GROK_API_KEY=你的Grok API Key
+NEXT_PUBLIC_SUPABASE_URL=https://你的项目ID.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=你的anon key
 ```
 
-### Option B: GitHub + Vercel Dashboard
+---
 
-1. Push this repo to GitHub
-2. Go to [vercel.com](https://vercel.com) → New Project → Import from GitHub
-3. Add environment variable `GROK_API_KEY` in project settings
-4. Deploy!
+## 📖 使用说明 How to Use
 
-```
-Project Settings → Environment Variables → Add:
-  Name:  GROK_API_KEY
-  Value: your_grok_api_key_here
-```
+### 添加患者
+1. 点击左侧 **+** 按钮
+2. 输入患者姓名
+3. 在「患者信息」标签填写诊断、病理、基因检测等信息
 
-## 📂 Project Structure
+### 上传检验报告
+1. 点击「上传报告」标签
+2. 拍照或选择检验单图片上传
+3. AI 自动识别所有指标
+4. 确认数据后点击「确认导入」
 
-```
-cancer-dashboard/
-├── app/
-│   ├── api/grok/route.ts    # Grok API proxy endpoint
-│   ├── globals.css          # Global styles & design system
-│   ├── layout.tsx           # Root layout
-│   └── page.tsx             # Main page
-├── components/
-│   ├── Sidebar.tsx          # Patient list sidebar
-│   ├── PatientDashboard.tsx # Main dashboard container
-│   ├── OverviewCards.tsx    # Summary cards & latest record
-│   ├── MarkerCharts.tsx     # Recharts trend visualizations
-│   ├── RecordTable.tsx      # Historical data table
-│   ├── UploadReport.tsx     # Image upload + AI extraction
-│   ├── AIAnalysisPanel.tsx  # AI analysis + chat interface
-│   ├── RecordModal.tsx      # Manual record entry form
-│   ├── PatientInfo.tsx      # Patient profile editor
-│   └── WelcomeScreen.tsx    # Onboarding screen
-├── lib/
-│   ├── types.ts             # TypeScript interfaces
-│   ├── storage.ts           # localStorage utilities
-│   ├── grok.ts              # Grok AI client
-│   └── pdf.ts               # PDF generation
-├── .env.example
-├── vercel.json
-└── tailwind.config.js
-```
+### 查看趋势图
+- 点击「趋势图」标签
+- 可选择显示哪些指标
+- 支持面积图和折线图切换
 
-## 🔑 Supported Medical Metrics
+### AI 分析
+- 点击顶部「AI分析」按钮
+- 等待 AI 生成完整的治疗效果分析报告
+- 也可以在「AI分析」标签与 AI 对话提问
 
-### Tumor Markers
-- CEA (癌胚抗原) — Normal: ≤4.7 ng/mL
-- CA199 — Normal: ≤27 U/mL
-- CA125 — Normal: ≤35 U/mL
-- CA153 — Normal: ≤24 U/mL
-- CA724 — Normal: ≤6.9 U/mL
-- AFP — Normal: ≤9 ng/mL
-- Custom markers (user-defined)
+### 导出 PDF
+- 点击顶部「导出PDF」按钮
+- 在弹出的打印对话框中选择「另存为PDF」
 
-### Blood Tests
-- WBC (白细胞) — Normal: 3.5–9.5 ×10⁹/L
-- HGB (血红蛋白) — Normal: 115–150 g/L
-- PLT (血小板) — Normal: 125–350 ×10⁹/L
-- Neutrophil (中性粒细胞)
-- Creatinine (血肌酐)
-- ALT/AST (肝功能)
-- TBIL (总胆红素)
+---
 
-## 🤖 Grok API Models Used
+## 🏗️ 技术栈 Tech Stack
 
-| Feature | Model |
-|---------|-------|
-| Report image scanning | `grok-2-vision-1212` |
-| Medical analysis | `grok-2-1212` |
-| AI chat assistant | `grok-2-1212` |
+- **框架**: Next.js 16
+- **样式**: Tailwind CSS
+- **图表**: Recharts
+- **数据库**: Supabase (PostgreSQL)
+- **AI**: xAI Grok API (Vision + Text)
+- **部署**: Vercel
 
-## ⚠️ Medical Disclaimer
+---
 
-> This tool is for **reference only** and does not constitute medical advice. All AI-generated analysis must be reviewed by qualified medical professionals. Always follow your physician's guidance.
+## ⚠️ 免责声明 Disclaimer
 
-## 🔒 Privacy
+> 本工具由 AI 辅助生成分析报告，**仅供参考，不构成医疗建议**。所有医疗决策请以主治医师意见为准。
+>
+> This tool generates AI-assisted analysis for **reference only and does not constitute medical advice**. Always follow your physician's guidance for medical decisions.
 
-All patient data is stored **exclusively in your browser's localStorage**. No data is sent to any server except when calling the Grok API for AI analysis. API calls go through the `/api/grok` proxy which keeps your API key server-side secure.
+---
 
-## 📝 License
+## 🤝 贡献 Contributing
 
-MIT
+欢迎提交 Issue 和 Pull Request！如果这个工具对你有帮助，请给个 ⭐ Star，让更多患者能发现它。
+
+If this tool helps you, please give it a ⭐ Star so more patients can find it!
+
+---
+
+## 📄 License
+
+MIT © [liewmanhung](https://github.com/liewmanhung)
