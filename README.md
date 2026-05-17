@@ -2,7 +2,7 @@
 
 > An AI-powered cancer treatment tracking dashboard for patients and caregivers. Upload medical report photos, track tumor markers over time, get AI medical insights, and share data with family — all in one place.
 
-**[🌐 Live Demo](https://cancer-dashboard.vercel.app)** · **[中文说明](#中文说明)**
+**[中文说明](#中文说明)**
 
 ---
 
